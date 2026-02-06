@@ -1,3 +1,10 @@
+/**
+ * Login
+ *
+ * Basic login form used for demo purposes. This component is non-functional
+ * (no authentication logic) and meant to be replaced or integrated with a
+ * real auth flow by the application.
+ */
 export default function Login() {
   return (
     <div className="bg-white dark:bg-slate-800 rounded-lg shadow p-6">

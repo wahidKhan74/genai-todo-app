@@ -1,3 +1,9 @@
+/**
+ * Home
+ *
+ * Simple informational landing page for the demo app. No props or
+ * side-effects.
+ */
 export default function Home() {
   return (
     <div style={{ padding: 12 }}>

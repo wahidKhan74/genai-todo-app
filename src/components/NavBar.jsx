@@ -1,7 +1,24 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
+/**
+ * NavBar
+ *
+ * Top navigation bar used across the app. Responsive: shows inline links on
+ * medium+ screens and a collapsible menu on small screens.
+ *
+ * Links:
+ * - Home: `/`
+ * - Todos: `/todos`
+ * - Login: `/login`
+ * - Register: `/register`
+ *
+ * Local state:
+ * - `open` controls the mobile menu visibility.
+ */
 export default function NavBar() {
+  // `open` controls the mobile dropdown menu. Kept local to this component
+  // because menu state doesn't need to be global.
   const [open, setOpen] = useState(false)
 
   return (
@@ -22,6 +39,10 @@ export default function NavBar() {
             aria-label="Toggle menu"
             className="p-2 rounded hover:bg-slate-100 dark:hover:bg-slate-700"
           >
+            {/*
+              Toggle icon: show hamburger when `open` is false, and an X when
+              `open` is true. We switch the `d` attribute string accordingly.
+            */}
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={open ? 'M6 18L18 6M6 6l12 12' : 'M4 6h16M4 12h16M4 18h16'} />
             </svg>

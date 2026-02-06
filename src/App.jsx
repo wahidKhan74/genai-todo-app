@@ -6,6 +6,20 @@ import NavBar from './components/NavBar'
 import Login from './pages/Login'
 import Register from './pages/Register'
 
+/**
+ * App
+ *
+ * Top-level application component that composes the `NavBar` and the route
+ * definitions. Routes provided:
+ * - `/` -> `Home`
+ * - `/todos` -> `TodoApp`
+ * - `/login` -> `Login`
+ * - `/register` -> `Register`
+ *
+ * The app relies on `BrowserRouter` being mounted at the root (see
+ * `src/main.jsx`).
+ */
+
 function App() {
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100">

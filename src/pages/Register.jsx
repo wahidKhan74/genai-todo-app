@@ -1,3 +1,10 @@
+/**
+ * Register
+ *
+ * Demo registration form. Like `Login`, this is a presentational component
+ * and does not implement backend integration. Use this as a starting point
+ * for wiring up real registration logic.
+ */
 export default function Register() {
   return (
     <div className="bg-white dark:bg-slate-800 rounded-lg shadow p-6">
