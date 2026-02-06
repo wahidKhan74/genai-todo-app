@@ -1,9 +1,9 @@
-
-
-
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import TodoApp from '../TodoApp'
+import * as api from '../../api/todos'
+
+jest.mock('../../api/todos')
 
 /**
  * Test suite for TodoApp component
@@ -13,9 +13,11 @@ import TodoApp from '../TodoApp'
  */
 describe('TodoApp', () => {
 
-    // Clear localStorage before each test to ensure a clean state
+    // Clear localStorage and reset API mocks before each test to ensure a clean state
     beforeEach(() => {
         localStorage.clear()
+        jest.clearAllMocks()
+        api.getTodos.mockResolvedValue([])
     })
 
     /**
@@ -23,6 +25,7 @@ describe('TodoApp', () => {
      * @desc Types a todo item and clicks add button, then verifies it appears in the document
      */
     test('adds a todo', async () => {
+        api.createTodo.mockResolvedValue({ id: 1, text: 'Write tests', done: false })
         render(<TodoApp />)
 
         const input = screen.getByPlaceholderText(/add a new todo/i)
@@ -31,7 +34,7 @@ describe('TodoApp', () => {
         await userEvent.type(input, 'Write tests')
         await userEvent.click(addButton)
 
-        const todo = screen.getByText('Write tests')
+        const todo = await screen.findByText('Write tests')
         expect(todo).toBeInTheDocument()
     })
 
@@ -41,6 +44,9 @@ describe('TodoApp', () => {
      * @desc Adds a todo item, clicks its checkbox to mark as complete, then verifies the todo has the 'line-through' class applied
      */
     test('toggles a todo completion state', async () => {
+        api.createTodo.mockResolvedValue({ id: 2, text: 'Write tests', done: false })
+        api.updateTodo.mockImplementation((id, patch) => Promise.resolve({ id, text: 'Write tests', done: patch.done }))
+
         render(<TodoApp />)
 
         const input = screen.getByPlaceholderText(/add a new todo/i)
@@ -49,10 +55,11 @@ describe('TodoApp', () => {
         await userEvent.type(input, 'Write tests')
         await userEvent.click(addButton)
 
-        const todo = screen.getByText('Write tests')
-        const checkbox = screen.getByRole('checkbox')
+        const todo = await screen.findByText('Write tests')
+        const checkbox = await screen.findByRole('checkbox')
         await userEvent.click(checkbox)
-        expect(todo).toHaveClass('line-through')
+
+        await waitFor(() => expect(todo).toHaveClass('line-through'))
     })
 
     /**
@@ -60,6 +67,9 @@ describe('TodoApp', () => {
      * @desc Adds a todo item, clicks its delete button, then verifies the todo is no longer in the document
      */
     test('removes a todo', async () => {
+        api.createTodo.mockResolvedValue({ id: 3, text: 'Write tests', done: false })
+        api.deleteTodo.mockResolvedValue()
+
         render(<TodoApp />)
 
         const input = screen.getByPlaceholderText(/add a new todo/i)
@@ -68,10 +78,11 @@ describe('TodoApp', () => {
         await userEvent.type(input, 'Write tests')
         await userEvent.click(addButton)
 
-        const todo = screen.getByText('Write tests')
-        const deleteButton = screen.getByRole('button', { name: /delete/i })
+        const todo = await screen.findByText('Write tests')
+        const deleteButton = await screen.findByRole('button', { name: /delete/i })
         await userEvent.click(deleteButton)
-        expect(todo).not.toBeInTheDocument()
+
+        await waitFor(() => expect(todo).not.toBeInTheDocument())
     })
 
 })

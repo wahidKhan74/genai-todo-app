@@ -1,0 +1,44 @@
+{
+  "todos": [
+    {
+      "id": "1",
+      "text": "Buy milk",
+      "done": true
+    },
+    {
+      "id": "2",
+      "text": "Learn React",
+      "done": true
+    },
+    {
+      "id": "971b",
+      "text": "Create Test",
+      "done": true
+    },
+    {
+      "id": "a4b7",
+      "text": "Add documentation",
+      "done": true
+    },
+    {
+      "id": "696d",
+      "text": "Update test",
+      "done": false
+    },
+    {
+      "id": "5bb9",
+      "text": "Write tests",
+      "done": false
+    },
+    {
+      "id": "c3a0",
+      "text": "Write tests",
+      "done": false
+    },
+    {
+      "id": "6b2d",
+      "text": "Write tests",
+      "done": false
+    }
+  ]
+}

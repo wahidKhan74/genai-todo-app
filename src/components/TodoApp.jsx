@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { getTodos, createTodo, updateTodo, deleteTodo } from '../api/todos'
 
 /**
  * TodoApp
@@ -23,48 +24,46 @@ export default function TodoApp() {
   // or if access to localStorage is restricted (e.g. privacy settings).
   // Using a function here prevents reading localStorage during server-side
   // rendering and avoids unnecessary reads on every render.
-  const [todos, setTodos] = useState(() => {
-    try {
-      return JSON.parse(localStorage.getItem('todos')) || []
-    } catch {
-      return []
-    }
-  })
+  const [todos, setTodos] = useState([])
   const [text, setText] = useState('')
 
-  // Persist updates to localStorage whenever `todos` changes. We stringify the
-  // array because localStorage stores strings only. For larger apps you may
-  // want to debounce writes or move persistence to a separate service.
   useEffect(() => {
-    try {
-      localStorage.setItem('todos', JSON.stringify(todos))
-    } catch (e) {
-      // Ignore write errors (quota exceeded, private mode, etc.) to avoid
-      // crashing the UI; consider surfacing an error to the user if needed.
-      // console.warn('Failed to persist todos', e)
+    let mounted = true
+    getTodos()
+      .then((data) => mounted && setTodos(data))
+      .catch(() => {})
+    return () => {
+      mounted = false
     }
-  }, [todos])
+  }, [])
 
-  function addTodo(e) {
+  async function addTodo(e) {
     e.preventDefault()
     const value = text.trim()
     if (!value) return
-    // Use functional update to avoid stale closures and ensure we append
-    // to the latest state snapshot when multiple updates happen quickly.
-    setTodos((s) => [...s, { id: Date.now(), text: value, done: false }])
-    setText('')
+    try {
+      const res = await createTodo({ text: value, done: false })
+      setTodos((s) => [...s, res])
+      setText('')
+    } catch (err) {
+      // swallow for now; optionally show UI error
+    }
   }
 
-  function toggle(id) {
-    // Map produces a new array instance which keeps updates immutable — this
-    // plays nicely with React's change detection and the persistence effect.
-    setTodos((s) => s.map((t) => (t.id === id ? { ...t, done: !t.done } : t)))
+  async function toggle(id) {
+    const t = todos.find((x) => x.id === id)
+    if (!t) return
+    try {
+      const res = await updateTodo(id, { done: !t.done })
+      setTodos((s) => s.map((it) => (it.id === id ? res : it)))
+    } catch {}
   }
 
-  function remove(id) {
-    // Filter returns a new array without the removed item; functional update
-    // prevents races against concurrent setState calls.
-    setTodos((s) => s.filter((t) => t.id !== id))
+  async function remove(id) {
+    try {
+      await deleteTodo(id)
+      setTodos((s) => s.filter((t) => t.id !== id))
+    } catch {}
   }
 
   return (
